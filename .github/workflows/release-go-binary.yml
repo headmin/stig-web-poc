@@ -191,19 +191,36 @@ jobs:
           draft: ${{ inputs.draft }}
           generate_release_notes: true
           files: |
-            dist/stig-processor-*
-            dist/stig-data-combiner-*
-            dist/*.sha256
+            dist/stig-processor-linux-amd64
+            dist/stig-processor-linux-amd64.sha256
+            dist/stig-processor-darwin-arm64
+            dist/stig-processor-darwin-arm64.sha256
+            dist/stig-processor-darwin-amd64
+            dist/stig-processor-darwin-amd64.sha256
+            dist/stig-data-combiner-linux-amd64
+            dist/stig-data-combiner-linux-amd64.sha256
+            dist/stig-data-combiner-darwin-arm64
+            dist/stig-data-combiner-darwin-arm64.sha256
+            dist/stig-data-combiner-darwin-amd64
+            dist/stig-data-combiner-darwin-amd64.sha256
           body: |
             ## STIG Processor ${{ inputs.version }}
 
-            ### Binaries
+            ### STIG Processor
 
             | Platform | Architecture | Binary |
             |----------|--------------|--------|
             | Linux | amd64 | `stig-processor-linux-amd64` |
             | macOS | arm64 (Apple Silicon) | `stig-processor-darwin-arm64` |
             | macOS | amd64 (Intel) | `stig-processor-darwin-amd64` |
+
+            ### STIG Data Combiner
+
+            | Platform | Architecture | Binary |
+            |----------|--------------|--------|
+            | Linux | amd64 | `stig-data-combiner-linux-amd64` |
+            | macOS | arm64 (Apple Silicon) | `stig-data-combiner-darwin-arm64` |
+            | macOS | amd64 (Intel) | `stig-data-combiner-darwin-amd64` |
 
             ### Checksums
 
@@ -212,6 +229,9 @@ jobs:
             ### Verification
 
             ```bash
-            # Verify checksum
+            # Verify STIG processor checksum
             sha256sum -c stig-processor-linux-amd64.sha256
+
+            # Verify data combiner checksum
+            sha256sum -c stig-data-combiner-linux-amd64.sha256
             ```
