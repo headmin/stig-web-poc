@@ -1,0 +1,171 @@
+name: Generate STIG Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      win_stig_ref:
+        description: "win-stig repo ref (branch, tag, or SHA)"
+        required: false
+        default: "main"
+        type: string
+      severity_filter:
+        description: "Filter by severity (all, high, medium, low)"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - high
+          - medium
+          - low
+      commit_results:
+        description: "Commit results back to repo"
+        required: false
+        default: true
+        type: boolean
+
+env:
+  GO_VERSION: "1.23"
+
+jobs:
+  generate-artifacts:
+    name: Generate STIG Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ms-stig
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout win-stig
+        uses: actions/checkout@v4
+        with:
+          repository: harrisonravazzolo/win-stig
+          ref: ${{ inputs.win_stig_ref }}
+          path: win-stig
+          token: ${{ github.token }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: src/*/go.sum
+
+      - name: Setup Python with uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Install Python dependencies
+        run: |
+          cd scripts
+          uv sync
+
+      - name: Build schema-builder
+        run: |
+          cd src/schema-builder
+          go build -o ../../bin/schema-builder .
+
+      - name: Find STIG JSON file
+        id: find-stig
+        run: |
+          # Find the Windows 11 STIG JSON file
+          STIG_FILE=$(find . -maxdepth 1 -name "*windows*11*.json" -o -name "*STIG*.json" | head -1)
+          if [ -z "$STIG_FILE" ]; then
+            echo "Error: No STIG JSON file found"
+            exit 1
+          fi
+          echo "stig_file=$STIG_FILE" >> $GITHUB_OUTPUT
+          echo "Found STIG file: $STIG_FILE"
+
+      - name: Generate benchmark data
+        run: |
+          mkdir -p web/src/data
+
+          SEVERITY_FLAG=""
+          if [ "${{ inputs.severity_filter }}" != "all" ]; then
+            SEVERITY_FLAG="-severity ${{ inputs.severity_filter }}"
+          fi
+
+          ./bin/schema-builder \
+            -stig "${{ steps.find-stig.outputs.stig_file }}" \
+            -win-stig ./win-stig \
+            -output web/src/data/benchmark-data.json \
+            $SEVERITY_FLAG \
+            -verbose
+
+      - name: Copy fix files
+        run: |
+          # Create directories for fix files
+          mkdir -p web/public/fixes/scripts
+          mkdir -p web/public/fixes/configuration-profiles
+
+          # Copy PowerShell scripts
+          if [ -d "win-stig/fix" ]; then
+            find win-stig/fix -name "*.ps1" -exec cp {} web/public/fixes/scripts/ \;
+            find win-stig/fix -name "*.xml" -exec cp {} web/public/fixes/configuration-profiles/ \;
+          fi
+
+          # List copied files
+          echo "=== PowerShell Scripts ==="
+          ls -la web/public/fixes/scripts/ || echo "No scripts found"
+          echo "=== Configuration Profiles ==="
+          ls -la web/public/fixes/configuration-profiles/ || echo "No profiles found"
+
+      - name: Validate export structure
+        run: |
+          uv run --project scripts python scripts/validate_export.py \
+            --data web/src/data/benchmark-data.json \
+            --fixes-dir web/public/fixes \
+            || echo "Validation completed with warnings"
+
+      - name: Generate summary
+        run: |
+          echo "## STIG Artifacts Generated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **STIG Source**: ${{ steps.find-stig.outputs.stig_file }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **win-stig ref**: ${{ inputs.win_stig_ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Severity Filter**: ${{ inputs.severity_filter }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "web/src/data/benchmark-data.json" ]; then
+            RULE_COUNT=$(jq '.categories | map(.rules | length) | add' web/src/data/benchmark-data.json)
+            CAT_COUNT=$(jq '.categories | length' web/src/data/benchmark-data.json)
+            echo "- **Categories**: $CAT_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total Rules**: $RULE_COUNT" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Fix Files" >> $GITHUB_STEP_SUMMARY
+          echo "- Scripts: $(ls web/public/fixes/scripts/ 2>/dev/null | wc -l | tr -d ' ')" >> $GITHUB_STEP_SUMMARY
+          echo "- Configuration Profiles: $(ls web/public/fixes/configuration-profiles/ 2>/dev/null | wc -l | tr -d ' ')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stig-artifacts
+          path: |
+            web/src/data/benchmark-data.json
+            web/public/fixes/
+          retention-days: 30
+
+      - name: Commit results
+        if: ${{ inputs.commit_results }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add web/src/data/benchmark-data.json
+          git add web/public/fixes/
+
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            git commit -m "chore: update STIG artifacts ($TIMESTAMP) [skip ci]" \
+              -m "win-stig ref: ${{ inputs.win_stig_ref }}" \
+              -m "Severity filter: ${{ inputs.severity_filter }}"
+            git push
+          fi

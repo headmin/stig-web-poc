@@ -1,0 +1,77 @@
+name: Extract Fleet Schema
+
+on:
+  workflow_dispatch:
+    inputs:
+      fleet_ref:
+        description: "Fleet repo ref (branch, tag, or SHA)"
+        required: false
+        default: "main"
+        type: string
+      commit_results:
+        description: "Commit results back to repo"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  extract-schema:
+    name: Extract Fleet GitOps Schema
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ms-stig
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Fleet (sparse - schema files only)
+        uses: actions/checkout@v4
+        with:
+          repository: fleetdm/fleet
+          ref: ${{ inputs.fleet_ref }}
+          path: fleet
+          token: ${{ github.token }}
+          sparse-checkout: |
+            server/fleet/policies.go
+            server/fleet/datastore.go
+            pkg/spec/gitops.go
+            pkg/spec/spec.go
+          sparse-checkout-cone-mode: false
+          fetch-depth: 1
+
+      - name: Setup Python with uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: |
+          cd scripts
+          uv sync
+
+      - name: Run schema extraction
+        run: |
+          mkdir -p web/src/schema docs
+          uv run --project scripts python scripts/extract_fleet_schema.py \
+            --fleet-path ./fleet \
+            --output-json web/src/schema/fleet-policy-schema.json \
+            --output-md docs/FLEET_SCHEMA_REFERENCE.md
+
+      - name: Upload schema artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleet-schema
+          path: |
+            web/src/schema/fleet-policy-schema.json
+            docs/FLEET_SCHEMA_REFERENCE.md
+          retention-days: 30
+
+      - name: Commit results
+        if: ${{ inputs.commit_results }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add web/src/schema/fleet-policy-schema.json docs/FLEET_SCHEMA_REFERENCE.md
+          git diff --staged --quiet || git commit -m "chore: update Fleet schema from ${{ inputs.fleet_ref }} [skip ci]"
+          git push
