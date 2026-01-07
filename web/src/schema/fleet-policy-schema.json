@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "Extracted from Fleet repository at commit 6d9a29d4ce3e",
+  "title": "Fleet GitOps Policy",
+  "description": "Schema for Fleet policy YAML files",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Policy name (required)"
+    },
+    "query": {
+      "type": "string",
+      "description": "osquery SQL query (required)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Policy description"
+    },
+    "critical": {
+      "type": "boolean",
+      "description": "Mark as high impact",
+      "default": false
+    },
+    "resolution": {
+      "type": "string",
+      "description": "How to fix failing policy"
+    },
+    "platform": {
+      "type": "string",
+      "description": "Target platforms (darwin, windows, linux)"
+    },
+    "calendar_events_enabled": {
+      "type": "boolean",
+      "description": "Enable calendar events (team only)"
+    },
+    "labels_include_any": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Include hosts with any of these labels"
+    },
+    "labels_exclude_any": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Exclude hosts with any of these labels"
+    },
+    "conditional_access_enabled": {
+      "type": "boolean",
+      "description": "Enable Entra conditional access (team only)"
+    },
+    "run_script": {
+      "type": "object",
+      "description": "Script to run on policy failure (team only)",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Relative path to script file"
+        }
+      },
+      "required": [
+        "path"
+      ]
+    },
+    "install_software": {
+      "type": "object",
+      "description": "Software to install on policy failure (team only)",
+      "properties": {
+        "package_path": {
+          "type": "string",
+          "description": "Path to software package YAML"
+        },
+        "app_store_id": {
+          "type": "string",
+          "description": "App Store ID"
+        },
+        "hash_sha256": {
+          "type": "string",
+          "description": "SHA256 hash of package"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "query"
+  ],
+  "_meta": {
+    "extracted_at": "2026-01-07T13:59:27.635083",
+    "git_commit": "6d9a29d4ce3e",
+    "valid_fields": [
+      "name",
+      "query",
+      "description",
+      "critical",
+      "resolution",
+      "team",
+      "platform",
+      "calendar_events_enabled",
+      "software_title_id",
+      "script_id",
+      "labels_include_any",
+      "labels_exclude_any",
+      "conditional_access_enabled",
+      "run_script",
+      "install_software"
+    ],
+    "team_only_fields": []
+  }
+}
