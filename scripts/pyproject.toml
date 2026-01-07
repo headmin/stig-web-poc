@@ -1,0 +1,11 @@
+[project]
+name = "ms-stig-scripts"
+version = "0.1.0"
+description = "Schema extraction and validation scripts for MS-STIG"
+requires-python = ">=3.12"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[tool.uv]
+dev-dependencies = []
