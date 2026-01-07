@@ -1,0 +1,23 @@
+<Add>
+  <!-- Okta needs this certificate deployed to the Users cert store. Using the ./Device LocURI will result in the device not being marked as managed -->
+  <!-- Name of SCEP node -->
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/PassportForWork/Biometrics</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">node</Format>
+    </Meta>
+  </Item>
+</Add>
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/PassportForWork/Biometrics/FacialFeaturesUseEnhancedAntiSpoofing</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">bool</Format>
+    </Meta>
+    <Data>true</Data>
+  </Item>
+</Add>

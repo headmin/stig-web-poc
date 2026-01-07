@@ -1,0 +1,1 @@
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "restrictanonymous" -Value 1 -Type DWord -Force

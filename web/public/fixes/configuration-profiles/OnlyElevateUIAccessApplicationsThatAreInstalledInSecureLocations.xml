@@ -1,0 +1,12 @@
+<!-- UserAccountControl_OnlyElevateUIAccessApplicationsThatAreInstalledInSecureLocations -->
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/UserAccountControl_OnlyElevateUIAccessApplicationsThatAreInstalledInSecureLocations</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>1</Data>
+  </Item>
+</Add>

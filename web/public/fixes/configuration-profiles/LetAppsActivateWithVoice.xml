@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Privacy/LetAppsActivateWithVoice</LocURI>
+    </Target>
+    <Data>2</Data>
+  </Item>
+</Add>

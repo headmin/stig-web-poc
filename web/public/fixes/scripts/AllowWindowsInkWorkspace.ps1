@@ -1,0 +1,1 @@
+New-ItemProperty -Path "HKLM:\Software\Policies\Microsoft\WindowsInkWorkspace" -Name "AllowWindowsInkWorkspace" -Value 0 -Type DWord -Force
