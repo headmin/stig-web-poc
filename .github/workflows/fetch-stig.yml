@@ -1,14 +1,14 @@
-name: Fetch STIG Data
+name: "[1] Fetch STIG Data"
 
 on:
   workflow_dispatch:
     inputs:
       stig_slug:
-        description: 'STIG slug (e.g., microsoft-windows-11-security-technical-implementation-guide)'
+        description: "STIG slug (e.g., microsoft-windows-11-security-technical-implementation-guide)"
         required: true
-        default: 'microsoft-windows-11-security-technical-implementation-guide'
+        default: "microsoft-windows-11-security-technical-implementation-guide"
       commit_results:
-        description: 'Commit results to repo'
+        description: "Commit results to repo"
         type: boolean
         default: false
 
@@ -22,7 +22,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
       - name: Install dependencies
         run: pip install httpx
@@ -32,7 +32,7 @@ jobs:
         run: |
           cd scripts
           python fetch_stig.py --slug "${{ github.event.inputs.stig_slug }}" -o ../microsoft-windows-11-security-technical-implementation-guide.json || true
-          
+
           # Check if file exists (may be pre-existing or newly created)
           if [ -f ../microsoft-windows-11-security-technical-implementation-guide.json ]; then
             SIZE=$(stat -c%s ../microsoft-windows-11-security-technical-implementation-guide.json 2>/dev/null || stat -f%z ../microsoft-windows-11-security-technical-implementation-guide.json)

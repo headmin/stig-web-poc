@@ -1,4 +1,4 @@
-name: Generate STIG Artifacts
+name: "[3] Generate STIG Artifacts"
 
 on:
   workflow_dispatch:

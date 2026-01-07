@@ -1,4 +1,4 @@
-name: Extract Fleet Schema
+name: "[2] Extract Fleet Schema"
 
 on:
   workflow_dispatch:
@@ -54,9 +54,8 @@ jobs:
         run: |
           mkdir -p web/src/schema docs
           uv run --project scripts python scripts/extract_fleet_schema.py \
-            --fleet-path ./fleet \
-            --output-json web/src/schema/fleet-policy-schema.json \
-            --output-md docs/FLEET_SCHEMA_REFERENCE.md
+            --fleet-repo ./fleet \
+            --output-dir .
 
       - name: Upload schema artifacts
         uses: actions/upload-artifact@v4

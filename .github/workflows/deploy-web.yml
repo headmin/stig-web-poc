@@ -1,4 +1,4 @@
-name: Deploy Web App
+name: "[5] Deploy Web App"
 
 on:
   push:
@@ -46,12 +46,12 @@ jobs:
         run: |
           cd web
           VITE_BASE_PATH=${{ env.BASE_PATH }} npm run build
-          
+
           # Verify build output
           test -f dist/index.html || { echo "[FAIL] dist/index.html missing"; exit 1; }
           test -d dist/assets || { echo "[FAIL] dist/assets missing"; exit 1; }
           grep -q "${{ env.BASE_PATH }}" dist/index.html || { echo "[FAIL] Base path not in output"; exit 1; }
-          
+
           echo "[OK] Build validation passed"
 
   build:
