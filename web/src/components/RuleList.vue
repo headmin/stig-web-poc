@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 import { useBenchmark } from '@/composables/useBenchmark'
 import { useSelection } from '@/composables/useSelection'
 import type { Rule } from '@/types/benchmark'
@@ -31,7 +33,6 @@ function getSeverityClass(severity: string): string {
   return `badge badge-${severity}`
 }
 
-import { computed } from 'vue'
 </script>
 
 <template>

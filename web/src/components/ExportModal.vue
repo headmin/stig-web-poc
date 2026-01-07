@@ -149,7 +149,7 @@ function handleClose() {
             <label class="format-option" :class="{ active: exportFormat === 'legacy' }">
               <input type="radio" v-model="exportFormat" value="legacy" />
               <div class="format-content">
-                <span class="format-name">Legacy</span>
+                <span class="format-name">Fileset</span>
                 <span class="format-desc">apiVersion/kind structure</span>
               </div>
             </label>

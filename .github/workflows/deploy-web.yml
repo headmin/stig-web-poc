@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,9 +34,42 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
+        run: cd web && npm ci
+
+      - name: TypeScript check
+        run: cd web && npm run typecheck
+
+      - name: Lint check
+        run: cd web && npm run lint
+
+      - name: Build validation
         run: |
           cd web
-          npm ci
+          VITE_BASE_PATH=${{ env.BASE_PATH }} npm run build
+          
+          # Verify build output
+          test -f dist/index.html || { echo "[FAIL] dist/index.html missing"; exit 1; }
+          test -d dist/assets || { echo "[FAIL] dist/assets missing"; exit 1; }
+          grep -q "${{ env.BASE_PATH }}" dist/index.html || { echo "[FAIL] Base path not in output"; exit 1; }
+          
+          echo "[OK] Build validation passed"
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        run: cd web && npm ci
 
       - name: Build web app
         run: |
