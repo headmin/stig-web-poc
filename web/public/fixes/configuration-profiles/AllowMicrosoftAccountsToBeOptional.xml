@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/AppRuntime/AllowMicrosoftAccountsToBeOptional</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<enabled/><data id="MSAOptional" value="1"/>]]></Data>
+  </Item>
+</Add>

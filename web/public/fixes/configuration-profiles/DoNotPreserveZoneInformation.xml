@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./User/Vendor/MSFT/Policy/Config/AttachmentManager/w</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<disabled/>]]></Data>
+  </Item>
+</Add>

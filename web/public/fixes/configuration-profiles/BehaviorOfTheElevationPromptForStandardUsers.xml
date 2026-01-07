@@ -1,0 +1,12 @@
+<!-- UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers -->
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/UserAccountControl_BehaviorOfTheElevationPromptForStandardUsers</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>

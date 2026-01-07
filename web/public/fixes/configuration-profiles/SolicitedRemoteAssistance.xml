@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/RemoteAssistance/SolicitedRemoteAssistance</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<disabled/><data id="fAllowToGetHelp" value="0"/>]]></Data>
+  </Item>
+</Add>

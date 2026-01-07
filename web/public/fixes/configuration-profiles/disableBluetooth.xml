@@ -1,0 +1,44 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Bluetooth/AllowAdvertising</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Bluetooth/AllowDiscoverableMode</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Bluetooth/AllowPrepairing</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Bluetooth/AllowPromptedProximalConnections</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>

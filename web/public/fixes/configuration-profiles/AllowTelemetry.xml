@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/System/AllowTelemetry</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">int</Format>
+    </Meta>
+    <Data>0</Data>
+  </Item>
+</Add>

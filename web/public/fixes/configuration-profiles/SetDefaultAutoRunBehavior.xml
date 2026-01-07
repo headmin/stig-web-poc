@@ -1,0 +1,11 @@
+<Add>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Autoplay/SetDefaultAutoRunBehavior</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<enabled/><data id="NoAutorun_Dropdown" value="1"/>]]></Data>
+  </Item>
+</Add>

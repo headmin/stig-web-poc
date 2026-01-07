@@ -1,0 +1,11 @@
+<Replace>
+  <Item>
+    <Target>
+      <LocURI>./User/Vendor/MSFT/Policy/Config/ADMX_WPN/NoLockScreenToastNotification</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<enabled/>]]></Data>
+  </Item>
+</Replace>

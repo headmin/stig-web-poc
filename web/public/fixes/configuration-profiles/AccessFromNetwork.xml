@@ -1,0 +1,11 @@
+<Replace>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/UserRights/AccessFromNetwork</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[*S-1-5-32-544]]></Data>
+  </Item>
+</Replace>
