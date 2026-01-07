@@ -1,0 +1,43 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+DOCS.md
+LICENSE
+
+# Build artifacts
+stig-processor
+coverage.out
+coverage.html
+
+# Output directories
+output/
+debug/
+
+# Development files
+Makefile
+.air.toml
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Go specific
+*.test
+*.prof
+
+# Temporary files
+*.tmp
+*.log
+
+# Test data (keep only necessary input files)
+test/
+examples/
