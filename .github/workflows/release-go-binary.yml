@@ -4,22 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag (e.g., v1.0.0)'
+        description: "Version tag (e.g., v1.0.0)"
         required: true
         type: string
       draft:
-        description: 'Create as draft release'
+        description: "Create as draft release"
         required: false
         default: true
         type: boolean
       sign_macos:
-        description: 'Sign & notarize macOS binaries (requires secrets)'
+        description: "Sign & notarize macOS binaries (requires secrets)"
         required: false
         default: false
         type: boolean
 
 env:
-  GO_VERSION: '1.23'
+  GO_VERSION: "1.25"
 
 jobs:
   build-linux:
@@ -41,16 +41,16 @@ jobs:
           cd src/stig-processor
           GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-processor-linux-amd64 .
 
-      - name: Build schema-builder (linux/amd64)
+      - name: Build stig-data-combiner (linux/amd64)
         run: |
-          cd src/schema-builder
-          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/schema-builder-linux-amd64 .
+          cd src/stig-data-combiner
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-data-combiner-linux-amd64 .
 
       - name: Create checksums
         run: |
           cd bin
           sha256sum stig-processor-linux-amd64 > stig-processor-linux-amd64.sha256
-          sha256sum schema-builder-linux-amd64 > schema-builder-linux-amd64.sha256
+          sha256sum stig-data-combiner-linux-amd64 > stig-data-combiner-linux-amd64.sha256
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -59,8 +59,8 @@ jobs:
           path: |
             bin/stig-processor-linux-amd64
             bin/stig-processor-linux-amd64.sha256
-            bin/schema-builder-linux-amd64
-            bin/schema-builder-linux-amd64.sha256
+            bin/stig-data-combiner-linux-amd64
+            bin/stig-data-combiner-linux-amd64.sha256
           retention-days: 7
 
   build-macos:
@@ -82,20 +82,20 @@ jobs:
           cd src/stig-processor
           GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-processor-darwin-arm64 .
 
-      - name: Build schema-builder (darwin/arm64)
+      - name: Build stig-data-combiner (darwin/arm64)
         run: |
-          cd src/schema-builder
-          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/schema-builder-darwin-arm64 .
+          cd src/stig-data-combiner
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-data-combiner-darwin-arm64 .
 
       - name: Build stig-processor (darwin/amd64)
         run: |
           cd src/stig-processor
           GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-processor-darwin-amd64 .
 
-      - name: Build schema-builder (darwin/amd64)
+      - name: Build stig-data-combiner (darwin/amd64)
         run: |
-          cd src/schema-builder
-          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/schema-builder-darwin-amd64 .
+          cd src/stig-data-combiner
+          GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w -X main.version=${{ inputs.version }}" -o ../../bin/stig-data-combiner-darwin-amd64 .
 
       # Optional: Code signing with 1Password
       - name: Install 1Password CLI
@@ -130,7 +130,7 @@ jobs:
           for arch in arm64 amd64; do
             zip -j "stig-tools-darwin-${arch}.zip" \
               "stig-processor-darwin-${arch}" \
-              "schema-builder-darwin-${arch}"
+              "stig-data-combiner-darwin-${arch}"
 
             # Submit for notarization
             xcrun notarytool submit "stig-tools-darwin-${arch}.zip" \
@@ -153,7 +153,7 @@ jobs:
           name: macos-binaries
           path: |
             bin/stig-processor-darwin-*
-            bin/schema-builder-darwin-*
+            bin/stig-data-combiner-darwin-*
             bin/*.sha256
           retention-days: 7
 
@@ -192,7 +192,7 @@ jobs:
           generate_release_notes: true
           files: |
             dist/stig-processor-*
-            dist/schema-builder-*
+            dist/stig-data-combiner-*
             dist/*.sha256
           body: |
             ## STIG Processor ${{ inputs.version }}

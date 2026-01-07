@@ -25,7 +25,7 @@ on:
         type: boolean
 
 env:
-  GO_VERSION: "1.23"
+  GO_VERSION: "1.25"
 
 jobs:
   generate-artifacts:
@@ -62,10 +62,10 @@ jobs:
           cd scripts
           uv sync
 
-      - name: Build schema-builder
+      - name: Build stig-data-combiner
         run: |
-          cd src/schema-builder
-          go build -o ../../bin/schema-builder .
+          cd src/stig-data-combiner
+          go build -o ../../bin/stig-data-combiner .
 
       - name: Find STIG JSON file
         id: find-stig
@@ -88,7 +88,7 @@ jobs:
             SEVERITY_FLAG="-severity ${{ inputs.severity_filter }}"
           fi
 
-          ./bin/schema-builder \
+          ./bin/stig-data-combiner \
             -stig "${{ steps.find-stig.outputs.stig_file }}" \
             -win-stig ./win-stig \
             -output web/src/data/benchmark-data.json \
