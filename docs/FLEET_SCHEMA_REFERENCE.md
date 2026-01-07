@@ -1,8 +1,8 @@
 # Fleet GitOps Policy Schema Reference
 
-> **Auto-generated** from Fleet source at commit [`6d9a29d4ce3e`](https://github.com/fleetdm/fleet/tree/6d9a29d4ce3e)
+> **Auto-generated** from Fleet source at commit [`bc0c7f1d137a`](https://github.com/fleetdm/fleet/tree/bc0c7f1d137a)
 > 
-> Extracted: 2026-01-07T13:59:27.635083
+> Extracted: 2026-01-07T23:01:43.870398
 
 ## Valid Policy Fields
 
@@ -64,12 +64,12 @@ These fields can **only** be used in team policy files, not global policies.
 
 ## Source Files
 
-- [`PolicySpec`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/server/fleet/policies.go#L354) - server/fleet/policies.go:354
-- [`PolicyData`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/server/fleet/policies.go#L225) - server/fleet/policies.go:225
-- [`Policy`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/server/fleet/policies.go#L276) - server/fleet/policies.go:276
-- [`GitOpsPolicySpec`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/pkg/spec/gitops.go#L184) - pkg/spec/gitops.go:184
-- [`PolicyRunScript`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/pkg/spec/gitops.go#L196) - pkg/spec/gitops.go:196
-- [`PolicyInstallSoftware`](https://github.com/fleetdm/fleet/blob/6d9a29d4ce3e/pkg/spec/gitops.go#L200) - pkg/spec/gitops.go:200
+- [`PolicySpec`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/server/fleet/policies.go#L354) - server/fleet/policies.go:354
+- [`PolicyData`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/server/fleet/policies.go#L225) - server/fleet/policies.go:225
+- [`Policy`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/server/fleet/policies.go#L276) - server/fleet/policies.go:276
+- [`GitOpsPolicySpec`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/pkg/spec/gitops.go#L184) - pkg/spec/gitops.go:184
+- [`PolicyRunScript`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/pkg/spec/gitops.go#L196) - pkg/spec/gitops.go:196
+- [`PolicyInstallSoftware`](https://github.com/fleetdm/fleet/blob/bc0c7f1d137a/pkg/spec/gitops.go#L200) - pkg/spec/gitops.go:200
 
 ## Invalid Fields (DO NOT USE)
 
