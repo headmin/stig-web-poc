@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$comment": "Extracted from Fleet repository at commit 6d9a29d4ce3e",
+  "$comment": "Extracted from Fleet repository at commit bc0c7f1d137a",
   "title": "Fleet GitOps Policy",
   "description": "Schema for Fleet policy YAML files",
   "type": "object",
@@ -89,8 +89,8 @@
     "query"
   ],
   "_meta": {
-    "extracted_at": "2026-01-07T13:59:27.635083",
-    "git_commit": "6d9a29d4ce3e",
+    "extracted_at": "2026-01-07T23:01:43.870398",
+    "git_commit": "bc0c7f1d137a",
     "valid_fields": [
       "name",
       "query",
