@@ -527,7 +527,7 @@ Get-ChildItem -Path fixes/ps1/*.ps1 | ForEach-Object { & $_.FullName }
 \`\`\`
 
 **MDM/XML Configurations**:
-Import through your MDM solution (Intune, SCCM, etc.)
+Import manually or via GitOps to your Fleet MDM instances
 `
     : ""
 }
