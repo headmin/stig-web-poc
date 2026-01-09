@@ -5,15 +5,15 @@ Proof of concept for STIG Benchmark Web Builder.
 ## Tools Overview
 
 ### Go Applications
-- **stig-processor**: Main CLI tool that converts STIG JSON to Fleet policies (YAML) with advanced multi-query registry parsing
+- **stig-processor**: Main CLI tool that converts STIG JSON to Fleet policies (YAML) with basic multi-query registry parsing
 - **stig-data-combiner**: Processes STIG data for the web interface (creates benchmark-data.json)
 
 ### GitHub Actions
-1. **[1] Fetch STIG**: Downloads latest DISA STIG JSON files
-2. **[2] Extract Fleet Schema**: Gets Fleet policy schema for web validation
-3. **[3] Generate STIG Artifacts**: Creates web data files from STIG JSON
-4. **[4] Release Go Binaries**: Builds/releases the Go applications
-5. **[5] Deploy Web**: Publishes the Vue.js STIG browser to GitHub Pages
+1. **[1] Fetch STIG**: Downloads latest DISA STIG JSON files [usage: when STIG updates get released]
+2. **[2] Extract Fleet Schema**: Gets Fleet policy schema for web validation [usage:when Fleet GitOps Schema changes]
+3. **[3] Generate STIG Artifacts**: Creates web data files from STIG JSON and add related actions [usage: add new/changed STIG and actions]
+4. **[4] Release Go Binaries**: Builds/releases the Go cli tools [usage: only for cli-tool update]
+5. **[5] Deploy Web**: Publishes the Vue.js STIG browser to GitHub Pages [usage: when updates apply, frequent]
 
 ## Architecture
 
