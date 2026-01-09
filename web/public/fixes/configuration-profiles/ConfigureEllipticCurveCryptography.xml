@@ -1,0 +1,11 @@
+<Replace>
+  <Item>
+    <Target>
+      <LocURI>./Device/Vendor/MSFT/Policy/Config/Cryptography/ConfigureEllipticCurveCryptography</LocURI>
+    </Target>
+    <Meta>
+      <Format xmlns="syncml:metinf">chr</Format>
+    </Meta>
+    <Data><![CDATA[<enabled/><data id="EccCurves" value="NistP384&#xF000;NistP256"/>]]></Data>
+  </Item>
+</Replace>

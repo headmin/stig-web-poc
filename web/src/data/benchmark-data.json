@@ -3,7 +3,7 @@
     "framework": "STIG",
     "title": "Microsoft Windows 11 Security Technical Implementation Guide",
     "version": "2",
-    "generatedAt": "2026-01-07T22:46:15Z"
+    "generatedAt": "2026-01-09T06:11:23Z"
   },
   "categories": [
     {
@@ -1232,7 +1232,12 @@
           "checkContent": "If the system is configured to send audit records directly to an audit server, this is NA. This must be documented with the ISSO.\n\nIf the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System\\\n\nValue Name: MaxSize\n\nValue Type: REG_DWORD\nValue: 0x00008000 (32768) (or greater)",
           "fixText": "If the system is configured to send audit records directly to an audit server, this is NA. This must be documented with the ISSO.\n\nConfigure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Event Log Service \u003e\u003e System \u003e\u003e \"Specify the maximum log file size (KB)\" to \"Enabled\" with a \"Maximum Log Size (KB)\" of \"32768\" or greater.",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\System\\MaxSize' AND CAST(data AS INTEGER) \u003e= 32768);",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\System\\MaxSize' AND CAST(data AS INTEGER) \u003e= 32768);",
+          "fix": {
+            "filename": "SystemEventLogSize.ps1",
+            "type": "ps1",
+            "content": "# System Event Log - 32768 KB\nwevtutil sl System /ms:33554432\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -1633,7 +1638,12 @@
           "checkContent": "If the system is configured to send audit records directly to an audit server, this is NA. This must be documented with the ISSO.\n\nIf the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Application\\\n\nValue Name: MaxSize\n\nValue Type: REG_DWORD\nValue: 0x00008000 (32768) (or greater)",
           "fixText": "If the system is configured to send audit records directly to an audit server, this is NA. This must be documented with the ISSO.\n\nConfigure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Event Log Service \u003e\u003e Application \u003e\u003e \"Specify the maximum log file size (KB)\" to \"Enabled\" with a \"Maximum Log Size (KB)\" of \"32768\" or greater.",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Application\\MaxSize' AND CAST(data AS INTEGER) \u003e= 32768);",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Application\\MaxSize' AND CAST(data AS INTEGER) \u003e= 32768);",
+          "fix": {
+            "filename": "ApplicationEventLogSize.ps1",
+            "type": "ps1",
+            "content": "# Application Event Log - 32768 KB\nwevtutil sl Application /ms:33554432\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -1728,7 +1738,12 @@
           "checkContent": "If the system is configured to send audit records directly to an audit server, this is NA. This must be documented with the ISSO.\n\nIf the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security\\\n\nValue Name: MaxSize\n\nValue Type: REG_DWORD\nValue: 0x000fa000 (1024000) (or greater)",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Event Log Service \u003e\u003e Security \u003e\u003e \"Specify the maximum log file size (KB)\" to \"Enabled\" with a \"Maximum Log Size (KB)\" of \"1024000\" or greater.\n\nIf the system is configured to send audit records directly to an audit server, this must be documented with the ISSO.",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\EventLog\\Security\\MaxSize' AND CAST(data AS INTEGER) \u003e= 1024000);",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\EventLog\\Security\\MaxSize' AND CAST(data AS INTEGER) \u003e= 1024000);",
+          "fix": {
+            "filename": "SecurityEventLogSize.ps1",
+            "type": "ps1",
+            "content": "# Security Event Log - 1024000 KB\nwevtutil sl Security /ms:1048576000\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -1949,6 +1964,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e System \u003e\u003e Power Management \u003e\u003e Sleep Settings \u003e\u003e \"Require a password when a computer wakes (on battery)\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\\DCSettingIndex' AND data = '1');",
+          "fix": {
+            "filename": "DCSettingIndex.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\")) {\n    New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Name \"DCSettingIndex\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -1976,6 +1996,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e System \u003e\u003e Power Management \u003e\u003e Sleep Settings \u003e\u003e \"Require a password when a computer wakes (plugged in)\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\\ACSettingIndex' AND data = '1');",
+          "fix": {
+            "filename": "ACSettingIndex.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Power\\PowerSettings\\0e796bdb-100d-47d6-a2d5-f7d2daa51f51\" -Name \"ACSettingIndex\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2158,6 +2183,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e MSS (Legacy) \u003e\u003e \"MSS: (EnableICMPRedirect) Allow ICMP redirects to override OSPF generated routes\" to \"Disabled\".\n\nThis policy setting requires the installation of the MSS-Legacy custom templates included with the STIG package. \"MSS-Legacy.admx\" and \"MSS-Legacy.adml\" must be copied to the \\Windows\\PolicyDefinitions and \\Windows\\PolicyDefinitions\\en-US directories respectively.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\EnableICMPRedirect' AND data = '0');",
+          "fix": {
+            "filename": "EnableICMPRedirect.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\" -Name \"EnableICMPRedirect\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2212,6 +2242,11 @@
           "fixText": "If the device does not have a camera, this is NA.\n\nConfigure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Control Panel \u003e\u003e Personalization \u003e\u003e \"Prevent enabling lock screen camera\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization\\NoLockScreenCamera' AND data = '1');",
+          "fix": {
+            "filename": "NoLockScreenCamera.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Personalization\" -Name \"NoLockScreenCamera\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2287,7 +2322,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\\n\nValue Name: DisableIpSourceRouting\n\nValue Type: REG_DWORD\nValue: 2",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e MSS (Legacy) \u003e\u003e \"MSS: (DisableIPSourceRouting IPv6) IP source routing protection level (protects against packet spoofing)\" to \"Highest protection, source routing is completely disabled\".\n\nThis policy setting requires the installation of the MSS-Legacy custom templates included with the STIG package. \"MSS-Legacy.admx\" and \"MSS-Legacy.adml\" must be copied to the \\Windows\\PolicyDefinitions and \\Windows\\PolicyDefinitions\\en-US directories respectively.",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\DisableIpSourceRouting' AND data = '2');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\\DisableIPSourceRouting' AND data = '2');",
+          "fix": {
+            "filename": "DisableIpSourceRouting.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip6\\Parameters\" -Name \"DisableIPSourceRouting\" -Value 2 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2342,6 +2382,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e MSS (Legacy) \u003e\u003e \"MSS: (NoNameReleaseOnDemand) Allow the computer to ignore NetBIOS name release requests except from WINS servers\" to \"Enabled\".\n\nThis policy setting requires the installation of the MSS-Legacy custom templates included with the STIG package. \"MSS-Legacy.admx\" and \"MSS-Legacy.adml\" must be copied to the \\Windows\\PolicyDefinitions and \\Windows\\PolicyDefinitions\\en-US directories respectively.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Netbt\\Parameters\\NoNameReleaseOnDemand' AND data = '1');",
+          "fix": {
+            "filename": "NoNameReleaseOnDemand.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netbt\\Parameters\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Netbt\\Parameters\" -Name \"NoNameReleaseOnDemand\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2369,6 +2414,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e MS Security Guide \u003e\u003e \"Apply UAC restrictions to local accounts on network logons\" to \"Enabled\".\n\nThis policy setting requires the installation of the SecGuide custom templates included with the STIG package. \"SecGuide.admx\" and \"SecGuide.adml\" must be copied to the \\Windows\\PolicyDefinitions and \\Windows\\PolicyDefinitions\\en-US directories respectively.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\LocalAccountTokenFilterPolicy' AND data = '0');",
+          "fix": {
+            "filename": "LocalAccountTokenFilterPolicy.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\")) {\n    New-Item -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\" -Name \"LocalAccountTokenFilterPolicy\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2467,6 +2517,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Network \u003e\u003e Network Connections \u003e\u003e \"Prohibit use of Internet Connection Sharing on your DNS domain network\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections\\NC_ShowSharedAccessUI' AND data = '0');",
+          "fix": {
+            "filename": "NC_ShowSharedAccessUI.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections\")) {\n    New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Network Connections\" -Name \"NC_ShowSharedAccessUI\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2521,6 +2576,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Network \u003e\u003e SSL Configuration Settings \u003e\u003e \"ECC Curve Order\" to \"Enabled\" with \"ECC Curve Order:\" including the following in the order listed:\n\nNistP384\nNistP256",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Cryptography\\Configuration\\SSL\\00010002\\EccCurves' AND data != '' AND LENGTH(data) \u003e 0);",
+          "fix": {
+            "filename": "ConfigureEllipticCurveCryptography.xml",
+            "type": "xml",
+            "content": "\u003cReplace\u003e\n  \u003cItem\u003e\n    \u003cTarget\u003e\n      \u003cLocURI\u003e./Device/Vendor/MSFT/Policy/Config/Cryptography/ConfigureEllipticCurveCryptography\u003c/LocURI\u003e\n    \u003c/Target\u003e\n    \u003cMeta\u003e\n      \u003cFormat xmlns=\"syncml:metinf\"\u003echr\u003c/Format\u003e\n    \u003c/Meta\u003e\n    \u003cData\u003e\u003c![CDATA[\u003cenabled/\u003e\u003cdata id=\"EccCurves\" value=\"NistP384\u0026#xF000;NistP256\"/\u003e]]\u003e\u003c/Data\u003e\n  \u003c/Item\u003e\n\u003c/Replace\u003e"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2547,7 +2607,12 @@
           "checkContent": "The default behavior for \"Minimize the number of simultaneous connections to the Internet or a Windows Domain\" is \"Enabled\".\n\nIf it exists and is configured with a value of \"0\", this is a finding.\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy\\\n\nValue Name: fMinimizeConnections\n\nValue Type: REG_DWORD\nValue: 3 (or if the Value Name does not exist)",
           "fixText": "The default behavior for \"Minimize the number of simultaneous connections to the Internet or a Windows Domain\" is \"Enabled\".\n\nIf this needs to be corrected, configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Network \u003e\u003e Windows Connection Manager \u003e\u003e \"Minimize the number of simultaneous connections to the Internet or a Windows Domain\" to \"Enabled\".  Under \"Options\", set \"Minimize Policy Options\" to \"3 = Prevent Wi-Fi When on Ethernet\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy\\fMinimizeConnections' AND data = '3 (or if the Value Name does not exist)');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy\\fMinimizeConnections' AND data = '3');",
+          "fix": {
+            "filename": "fMinimizeConnections.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\WcmSvc\\GroupPolicy\" -Name \"fMinimizeConnections\" -Value 3 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2602,6 +2667,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Network \u003e\u003e WLAN Service \u003e\u003e WLAN Settings\u003e\u003e \"Allow Windows to automatically connect to suggested open hotspots, to networks shared by contacts, and to hotspots offering paid services\" to \"Disabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\WcmSvc\\wifinetworkmanager\\config\\AutoConnectAllowedOEM' AND data = '0');",
+          "fix": {
+            "filename": "AutoConnectAllowedOEM.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Microsoft\\WcmSvc\\wifinetworkmanager\\config\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\WcmSvc\\wifinetworkmanager\\config\" -Name \"AutoConnectAllowedOEM\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2693,6 +2763,11 @@
           "fixText": "Virtualization-based security, including Credential Guard, currently cannot be implemented in virtual desktop implementations (VDI) due to specific supporting requirements including a TPM, UEFI with Secure Boot, and the capability to run the Hyper-V feature within the virtual desktop.\n\nFor VDIs where the virtual desktop instance is deleted or refreshed upon logoff, this is NA.\n\nFor VDIs with persistent desktops, this may be downgraded to a CAT II only where administrators have specific tokens for the VDI. Administrator accounts on virtual desktops must only be used on systems in the VDI; they may not have administrative privileges on any other systems such as servers and physical workstations.\n\nConfigure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e System \u003e\u003e Device Guard \u003e\u003e \"Turn On virtualization-based Security\" to \"Enabled\" with \"Enabled with UEFI lock\" selected for \"Credential Guard Configuration:\".\n\n\nA Microsoft TechNet article on Credential Guard, including system requirement details, can be found at the following link:\n\nhttps://docs.microsoft.com/en-us/windows/access-protection/credential-guard/credential-guard",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\\LsaCfgFlags' AND data = '1');",
+          "fix": {
+            "filename": "LsaCfgFlags.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\")) {\n    New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeviceGuard\" -Name \"LsaCfgFlags\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -2784,6 +2859,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e System \u003e\u003e Group Policy \u003e\u003e \"Configure registry policy processing\" to \"Enabled\" and select the option \"Process even if the Group Policy objects have not changed\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\\NoGPOListChanges' AND data = '0');",
+          "fix": {
+            "filename": "NoGPOListChanges.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Group Policy\\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}\" -Name \"NoGPOListChanges\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3057,6 +3137,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e AutoPlay Policies \u003e\u003e \"Set the default behavior for AutoRun\" to \"Enabled:Do not execute any autorun commands\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\NoAutorun' AND data = '1');",
+          "fix": {
+            "filename": "NoAutorun.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\"\n$ValueName = \"NoAutorun\"\n$ValueData = 1\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3084,6 +3169,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e AutoPlay Policies \u003e\u003e \"Turn off AutoPlay\" to \"Enabled:All Drives\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\policies\\Explorer\\NoDriveTypeAutoRun' AND data = '255');",
+          "fix": {
+            "filename": "NoDriveTypeAutoRun.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\"\n$ValueName = \"NoDriveTypeAutoRun\"\n$ValueData = 255\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3111,6 +3201,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Biometrics \u003e\u003e Facial Features \u003e\u003e \"Configure enhanced anti-spoofing\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Biometrics\\FacialFeatures\\EnhancedAntiSpoofing' AND data = '1');",
+          "fix": {
+            "filename": "EnhancedAntiSpoofing.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Biometrics\\FacialFeatures\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Biometrics\\FacialFeatures\" -Name \"EnhancedAntiSpoofing\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3138,6 +3233,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Cloud Content \u003e\u003e \"Turn off Microsoft consumer experiences\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent\\DisableWindowsConsumerFeatures' AND data = '1');",
+          "fix": {
+            "filename": "DisableWindowsConsumerFeatures.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent\")) {\n    New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\CloudContent\" -Name \"DisableWindowsConsumerFeatures\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3255,7 +3355,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\\\n\nValue Name: DODownloadMode\n\nValue Type: REG_DWORD\nValue: 0x00000000 (0) - No peering (HTTP Only)\n0x00000001 (1) - Peers on same NAT only (LAN)\n0x00000002 (2) - Local Network / Private group peering (Group)\n0x00000063 (99) - Simple download mode, no peering (Simple)\n0x00000064 (100) - Bypass mode, Delivery Optimization not used (Bypass)\n\nA value of 0x00000003 (3), Internet, is a finding.\n\nStandalone systems (configured in Settings):\nIf the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config\\\n\nValue Name: DODownloadMode\n\nValue Type: REG_DWORD\nValue: 0x00000000 (0) - Off\n0x00000001 (1) - LAN",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Delivery Optimization \u003e\u003e \"Download Mode\" to \"Enabled\" with any option except \"Internet\" selected.\n\nAcceptable selections include:\nBypass (100)\nGroup (2)\nHTTP only (0)\nLAN (1)\nSimple (99)\n\n.",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\\DODownloadMode' AND (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\DeliveryOptimization\\Config\\DODownloadMode' AND data = '0');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\\DODownloadMode' AND data = '99');",
+          "fix": {
+            "filename": "DODownloadMode.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\DeliveryOptimization\"\n$ValueName = \"DODownloadMode\"\n$ValueData = 99\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3291,6 +3396,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e File Explorer \u003e\u003e \"Configure Windows Defender SmartScreen\" to \"Enabled\" with \"Warn and prevent bypass\" selected. \n\nWindows 11 includes duplicate policies for this setting. It can also be configured under Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e Windows Defender SmartScreen \u003e\u003e Explorer.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\EnableSmartScreen' AND data = '1') AND (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\\ShellSmartScreenLevel' AND data = 'Block');",
+          "fix": {
+            "filename": "SmartScreen.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\" -Name \"EnableSmartScreen\" -Value 1 -Type DWord -Force\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\System\" -Name \"ShellSmartScreenLevel\" -Value \"Block\" -Type String -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3325,7 +3435,12 @@
           "checkContent": "The default behavior is for data execution prevention to be turned on for file explorer.\n\nIf it exists and is configured with a value of \"1\", this is a finding.\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer\\\n\nValue Name: NoDataExecutionPrevention\n\nValue Type: REG_DWORD\nValue: 0 (or if the Value Name does not exist)",
           "fixText": "The default behavior is for data execution prevention to be turned on for file explorer.\n\nTo correct this, configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e File Explorer \u003e\u003e \"Turn off Data Execution Prevention for Explorer\" to \"Not Configured\" or \"Disabled\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer\\NoDataExecutionPrevention' AND data = '0 (or if the Value Name does not exist)');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer\\NoDataExecutionPrevention' AND data = '0');",
+          "fix": {
+            "filename": "NoDataExecutionPrevention.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\Explorer\" -Name \"NoDataExecutionPrevention\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -3384,7 +3499,12 @@
           "checkContent": "The default behavior is for shell protected mode to be turned on for file explorer.\n\nIf it exists and is configured with a value of \"1\", this is a finding.\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\\n\nValue Name: PreXPSP2ShellProtocolBehavior\n\nValue Type: REG_DWORD\nValue: 0 (or if the Value Name does not exist)",
           "fixText": "The default behavior is for shell protected mode to be turned on for file explorer.\n\nTo correct this, configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e File Explorer \u003e\u003e \"Turn off shell protocol protected mode\" to \"Not Configured\" or \"Disabled\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\PreXPSP2ShellProtocolBehavior' AND data = '0 (or if the Value Name does not exist)');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\PreXPSP2ShellProtocolBehavior' AND data = '0');",
+          "fix": {
+            "filename": "PreXPSP2ShellProtocolBehavior.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\" -Name \"PreXPSP2ShellProtocolBehavior\" -Value 0 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4096,6 +4216,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e App Privacy \u003e\u003e \"Let Windows apps activate with voice while the system is locked\" to \"Enabled\" with Default for all Apps: set to Force Deny. \n\nThe requirement is NA if the policy value for Computer Configuration \u003e\u003e Administrative Templates \u003e\u003e Windows Components \u003e\u003e App Privacy \u003e\u003e \"Let Windows apps activate with voice\" is configured to \"Enabled\" with Default for all Apps: set to Force Deny.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\\LetAppsActivateWithVoiceAboveLock' AND data = '2') AND (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\\LetAppsActivateWithVoice' AND data = '2');",
+          "fix": {
+            "filename": "LetAppsActivateWithVoice.ps1",
+            "type": "ps1",
+            "content": "# Prevent Windows app voice activation entirely (be mindful of those with accessibility needs)\nNew-Item -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\" -Name \"LetAppsActivateWithVoiceAboveLock\" -Value 2 -Type DWord -Force\nNew-ItemProperty -Path \"HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\AppPrivacy\" -Name \"LetAppsActivateWithVoice\" -Value 2 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4325,6 +4450,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: LDAP client signing requirements\" to \"Negotiate signing\" at a minimum.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LDAP\\LDAPClientIntegrity' AND data = '1');",
+          "fix": {
+            "filename": "LDAPClientIntegrity.ps1",
+            "type": "ps1",
+            "content": "if (-not (Test-Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LDAP\")) {\n    New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LDAP\" -Force | Out-Null\n}\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LDAP\" -Name \"LDAPClientIntegrity\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4644,6 +4774,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\SCENoApplyLegacyAuditPolicy' AND data = '1');",
+          "fix": {
+            "filename": "SCENoApplyLegacyAuditPolicy.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" -Name \"SCENoApplyLegacyAuditPolicy\" -Value 1 -Type DWord -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4864,7 +4999,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\\n\nValue Name: SCRemoveOption\n\nValue Type: REG_SZ\nValue: 1 (Lock Workstation) or 2 (Force Logoff)\n\nThis can be left not configured or set to \"No action\" on workstations with the following conditions. This must be documented with the ISSO.\n-The setting cannot be configured due to mission needs, or because it interferes with applications.\n-Policy must be in place that users manually lock workstations when leaving them unattended.\n-The screen saver is properly configured to lock as required.",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Interactive logon: Smart card removal behavior\" to \"Lock Workstation\" or \"Force Logoff\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\SCRemoveOption' AND data = '1 (Lock Workstation) or 2 (Force Logoff)');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\scremoveoption' AND data = '2');",
+          "fix": {
+            "filename": "scremoveoption.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\"\n$ValueName = \"scremoveoption\"\n$ValueData = 2\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4892,6 +5032,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Microsoft network client: Digitally sign communications (always)\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\RequireSecuritySignature' AND data = '1');",
+          "fix": {
+            "filename": "RequireSecuritySignature.ps1",
+            "type": "ps1",
+            "content": "Set-SmbClientConfiguration -RequireSecuritySignature $true -Confirm:$false\n\n# Verify the change\nGet-SmbClientConfiguration | Select-Object RequireSecuritySignature\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4919,6 +5064,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Microsoft network client: Send unencrypted password to third-party SMB servers\" to \"Disabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\\EnablePlainTextPassword' AND data = '0');",
+          "fix": {
+            "filename": "EnablePlainTextPassword.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\SYSTEM\\CurrentControlSet\\Services\\LanmanWorkstation\\Parameters\"\n$ValueName = \"EnablePlainTextPassword\"\n$ValueData = 0\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -4990,6 +5140,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network access: Restrict anonymous access to Named Pipes and Shares\" to \"Enabled\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RestrictNullSessAccess' AND data = '1');",
+          "fix": {
+            "filename": "RestrictNullSessAccess.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\"\n$ValueName = \"RestrictNullSessAccess\"\n$ValueData = 1\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5017,6 +5172,11 @@
           "fixText": "Navigate to the policy Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network access: Restrict clients allowed to make remote calls to SAM\".\n\nSelect \"Edit Security\" to configure the \"Security descriptor:\".\n\nAdd \"Administrators\" in \"Group or user names:\" if it is not already listed (this is the default).\n\nSelect \"Administrators\" in \"Group or user names:\".\n\nSelect \"Allow\" for \"Remote Access\" in \"Permissions for \"Administrators\".\n\nClick \"OK\".\n\nThe \"Security descriptor:\" must be populated with \"O:BAG:BAD:(A;;RC;;;BA) for the policy to be enforced.",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\RestrictRemoteSAM' AND data = 'O:BAG:BAD:(A;;RC;;;BA)');",
+          "fix": {
+            "filename": "RestrictRemoteSAM.ps1",
+            "type": "ps1",
+            "content": "New-Item -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" -Force -ErrorAction SilentlyContinue | Out-Null\nNew-ItemProperty -Path \"HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" -Name \"RestrictRemoteSAM\" -Value \"O:BAG:BAD:(A;;RC;;;BA)\" -Type String -Force\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5043,7 +5203,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SYSTEM\\CurrentControlSet\\Control\\LSA\\MSV1_0\\\n\nValue Name: allownullsessionfallback\n\nValue Type: REG_DWORD\nValue: 0",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: Allow LocalSystem NULL session fallback\" to \"Disabled\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\LSA\\MSV1_0\\allownullsessionfallback' AND data = '0');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\allownullsessionfallback' AND data = '0');",
+          "fix": {
+            "filename": "NetworkSecurity_AllowLocalSystemNULLSessionFallback.xml",
+            "type": "xml",
+            "content": "\u003cAdd\u003e\n  \u003cItem\u003e\n    \u003cMeta\u003e\n      \u003cFormat xmlns=\"syncml:metinf\"\u003eint\u003c/Format\u003e\n    \u003c/Meta\u003e\n    \u003cTarget\u003e\n      \u003cLocURI\u003e./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/NetworkSecurity_AllowLocalSystemNULLSessionFallback\u003c/LocURI\u003e\n    \u003c/Target\u003e\n    \u003cData\u003e0\u003c/Data\u003e\n  \u003c/Item\u003e\n\u003c/Add\u003e"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5070,7 +5235,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SYSTEM\\CurrentControlSet\\Control\\LSA\\pku2u\\\n\nValue Name: AllowOnlineID\n\nValue Type: REG_DWORD\nValue: 0",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: Allow PKU2U authentication requests to this computer to use online identities\" to \"Disabled\".",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\LSA\\pku2u\\AllowOnlineID' AND data = '0');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\pku2u\\AllowOnlineID' AND data = '0');",
+          "fix": {
+            "filename": "NetworkSecurity_AllowPKU2UAuthenticationRequests.xml",
+            "type": "xml",
+            "content": "\u003cAdd\u003e\n  \u003cItem\u003e\n    \u003cMeta\u003e\n      \u003cFormat xmlns=\"syncml:metinf\"\u003eint\u003c/Format\u003e\n    \u003c/Meta\u003e\n    \u003cTarget\u003e\n      \u003cLocURI\u003e./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/NetworkSecurity_AllowPKU2UAuthenticationRequests\u003c/LocURI\u003e\n    \u003c/Target\u003e\n    \u003cData\u003e0\u003c/Data\u003e\n  \u003c/Item\u003e\n\u003c/Add\u003e\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5157,6 +5327,11 @@
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: LAN Manager authentication level\" to \"Send NTLMv2 response only. Refuse LM \u0026 NTLM\".",
           "automatable": true,
           "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\LmCompatibilityLevel' AND data = '5');",
+          "fix": {
+            "filename": "LmCompatibilityLevel.ps1",
+            "type": "ps1",
+            "content": "$RegistryPath = \"HKLM:\\System\\CurrentControlSet\\Control\\Lsa\"\n$ValueName = \"LmCompatibilityLevel\"\n$ValueData = 5\n\n# Create the registry path if it doesn't exist\nif (-not (Test-Path $RegistryPath)) {\n    New-Item -Path $RegistryPath -Force | Out-Null\n}\n\n# Set the registry value\nSet-ItemProperty -Path $RegistryPath -Name $ValueName -Value $ValueData -Type DWord\n\n# Verify the change\nGet-ItemProperty -Path $RegistryPath -Name $ValueName"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5183,7 +5358,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\\n\nValue Name: NTLMMinClientSec\n\nValue Type: REG_DWORD\nValue: 0x20080000 (537395200)",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: Minimum session security for NTLM SSP based (including secure RPC) clients\" to \"Require NTLMv2 session security\" and \"Require 128-bit encryption\" (all options selected).",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinClientSec' AND data = '537395200');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NtlmMinClientSec' AND data = '537395200');",
+          "fix": {
+            "filename": "NetworkSecurity_MinimumSessionSecurityForNTLMSSPBasedClients.xml",
+            "type": "xml",
+            "content": "\u003cAdd\u003e\n  \u003cItem\u003e\n    \u003cMeta\u003e\n      \u003cFormat xmlns=\"syncml:metinf\"\u003eint\u003c/Format\u003e\n    \u003c/Meta\u003e\n    \u003cTarget\u003e\n      \u003cLocURI\u003e./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/NetworkSecurity_MinimumSessionSecurityForNTLMSSPBasedClients\u003c/LocURI\u003e\n    \u003c/Target\u003e\n    \u003cData\u003e537395200\u003c/Data\u003e\n  \u003c/Item\u003e\n\u003c/Add\u003e\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
@@ -5210,7 +5390,12 @@
           "checkContent": "If the following registry value does not exist or is not configured as specified, this is a finding:\n\nRegistry Hive: HKEY_LOCAL_MACHINE\nRegistry Path: \\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\\n\nValue Name: NTLMMinServerSec\n\nValue Type: REG_DWORD\nValue: 0x20080000 (537395200)",
           "fixText": "Configure the policy value for Computer Configuration \u003e\u003e Windows Settings \u003e\u003e Security Settings \u003e\u003e Local Policies \u003e\u003e Security Options \u003e\u003e \"Network security: Minimum session security for NTLM SSP based (including secure RPC) servers\" to \"Require NTLMv2 session security\" and \"Require 128-bit encryption\" (all options selected).",
           "automatable": true,
-          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec' AND data = '537395200');",
+          "query": "SELECT 1 FROM registry WHERE (path = 'HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NtlmMinServerSec' AND data = '537395200');",
+          "fix": {
+            "filename": "NetworkSecurity_MinimumSessionSecurityForNTLMSSPBasedServers.xml",
+            "type": "xml",
+            "content": "\u003cAdd\u003e\n  \u003cItem\u003e\n    \u003cMeta\u003e\n      \u003cFormat xmlns=\"syncml:metinf\"\u003eint\u003c/Format\u003e\n    \u003c/Meta\u003e\n    \u003cTarget\u003e\n      \u003cLocURI\u003e./Device/Vendor/MSFT/Policy/Config/Wifi/AllowAutoConnectToWiFiSenseHotspots\u003c/LocURI\u003e\n    \u003c/Target\u003e\n    \u003cData\u003e1\u003c/Data\u003e\n  \u003c/Item\u003e\n\u003c/Add\u003e\n"
+          },
           "registryChecks": [
             {
               "hive": "HKEY_LOCAL_MACHINE",
